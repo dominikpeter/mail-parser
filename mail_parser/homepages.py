@@ -13,7 +13,7 @@ def create_connection_string_turbo(server, database):
 
 def query():
     return """
-        SELECT top 50 Kundennummer = [Nr.], Name, Homepage
+        SELECT Kundennummer = [Nr.], Name, Homepage
         FROM BDL.DES.Debitor d
         WHERE Homepage > '' AND Name NOT LIKE '§%'
         AND EXISTS ( SELECT Kunde

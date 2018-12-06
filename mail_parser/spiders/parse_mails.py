@@ -10,6 +10,9 @@ from urllib.parse import urlsplit
 from mail_parser.items import MailParserItem
 from mail_parser.homepages import DICT_OF_HOMEPAGES
 from collections import defaultdict
+from w3lib.html import remove_tags, remove_tags_with_content
+from scrapy import Selector
+
 
 
 class ParseMailsSpider(Spider):
@@ -17,12 +20,6 @@ class ParseMailsSpider(Spider):
     start_urls = [DICT_OF_HOMEPAGES[i][1] for i in DICT_OF_HOMEPAGES]
 
     allowed_domains = [urlsplit(i).netloc for i in start_urls]
-
-    # rules = (
-    #     Rule(LinkExtractor(deny=('\?',)), follow=True,
-    #             callback='parse_mail'),
-    # )
-
 
     def parse(self, response):
 
@@ -49,6 +46,16 @@ class ParseMailsSpider(Spider):
                 product['url'] = url
                 product['domain'] = domain
                 product['mail_equal_domain'] = domain == mail_domain
+
+                try:
+                    parent = response.xpath(
+                        "//*[contains(., '{}')]".format(mail))[-2]
+                    parent =  parent.xpath(".//text()").extract()
+                    parent = ' | '.join(
+                        [i.strip() for i in parent if i.strip()])
+                    product['parent_html'] = parent
+                except IndexError:
+                    product['parent_html'] = ''
 
                 yield dict(product)
 

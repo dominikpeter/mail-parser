@@ -14,3 +14,4 @@ class MailParserItem(scrapy.Item):
     url = scrapy.Field()
     domain = scrapy.Field()
     mail_equal_domain = scrapy.Field()
+    parent_html = scrapy.Field()
